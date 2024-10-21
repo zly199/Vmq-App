@@ -13,19 +13,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,13 +31,11 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.Set;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.PowerManager;
 import android.view.KeyEvent;
@@ -47,25 +43,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import java.util.List;
-import java.net.NetworkInterface;
-import java.util.Collections;
 import android.annotation.SuppressLint;
 import java.lang.reflect.Field;
 import android.app.Application;
-import java.lang.reflect.InvocationTargetException;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipEntry;
-import java.io.FileInputStream;
-import java.math.BigInteger;
 import java.io.File;
 import android.content.pm.PackageInfo;
-import java.security.Signature;
 import java.lang.reflect.Method;
-import android.widget.ImageView;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.content.ContextCompat;
 import android.os.Environment;
 import java.io.FileOutputStream;
 import android.content.pm.ResolveInfo;
@@ -75,17 +60,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.Reader;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.net.MalformedURLException;
-import java.io.OutputStream;
-import java.net.ProtocolException;
 import org.json.JSONObject;
-import android.view.Window;
-import android.view.WindowManager;
+import com.shinian.pay.R;
 
 /*
   email：shiniana@qq.com
@@ -392,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
 			// 未安装或版本不支持
 			return false;
 		}
-	} 
+	}
 
 
 	//检测电池白名单
@@ -488,71 +464,72 @@ public class MainActivity extends AppCompatActivity {
     //菜单监听item
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
 
-        switch (item.getItemId()) {
-                //群聊
-            case R.id.qun:
-                if (joinQQGroup("yy-t5uc2_M6gq66cqFFRDHR4LqQLPCAi")) {
-                    Toast.makeText(this, "正在跳转至反馈群...", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-                //分享软件             
-            case R.id.share:
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                //分享内容
-                sendIntent.putExtra(Intent.EXTRA_TEXT,
-                                    "V免签最新监控端修复原版支付宝-微信不回调bug长期维护项目下载：https://shinianacn.lanzouy.com/b027kqata 密码:vmq");
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, "分享"));
-                return true;
-                //打赏作者
-            case R.id.support:
-                /*                 
+        if (itemId == R.id.qun){
+            //群聊
+            if (joinQQGroup("yy-t5uc2_M6gq66cqFFRDHR4LqQLPCAi")) {
+                Toast.makeText(this, "正在跳转至反馈群...", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+
+        }else if (itemId == R.id.share){
+            //分享软件
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            //分享内容
+            sendIntent.putExtra(Intent.EXTRA_TEXT,
+                    "V免签最新监控端修复原版支付宝-微信不回调bug长期维护项目下载：https://shinianacn.lanzouy.com/b027kqata 密码:vmq");
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, "分享"));
+            return true;
+        }else if (itemId == R.id.support){
+            //打赏作者
+/*
                  Intent intent2 = new Intent();
                  intent2.setClass(MainActivity.this, Pay.class);
                  startActivity(intent2);
                  */
-                final String[] fruits = new String[] { "微信打赏", "支付宝打赏" };
+            final String[] fruits = new String[] { "微信打赏", "支付宝打赏" };
 
-                AlertDialog.Builder pay = new AlertDialog.Builder(this);
-                pay.setIcon(R.drawable.pay);//图标
-                pay.setTitle("选择您要打赏的方式~");//标题
-                pay.setCancelable(true); //设置是否可以点击对话框外部取消
-                //设置单选项目
-                pay.setSingleChoiceItems(fruits, -1, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String fs = fruits[which];
-                            if (fs.equals("微信打赏")) {
-                                Toast.makeText(MainActivity.this, "收款码已保存至相册,请选择相册收款码打赏~", Toast.LENGTH_LONG).show();
-                                //获取本地图片bitmap
-                                bitmap_image = BitmapFactory.decodeResource(getResources(), R.drawable.wxpay);
-                                saveImage("微信打赏", bitmap_image);
-                                //调用saveImageToGallery方法 传入上下文 bitmap
-                                //SaveImageUtils.saveImageToGallery(MainActivity.this, bitmap_image);                                                      
-                                //打开微信扫一扫
-                                openWeixinToQE_Code(MainActivity.this);
-                            } else if (fs.equals("支付宝打赏")) {
-                                Toast.makeText(MainActivity.this, "正在打开支付宝...", Toast.LENGTH_SHORT).show();
-                                //打开支付宝付款
-                                Uri uri = Uri.parse("https://qr.alipay.com/fkx12542rpb5fljmhxlal35");
-                                Intent intent = new Intent();
-                                intent.setAction("android.intent.action.VIEW");
-                                intent.setData(uri);
-                                startActivity(intent);
-                            }
-                        }
-                    }).create();
-                pay.show();
-                return true;
-                //关于
-            case R.id.about:
-                AlertDialog.Builder gy = new AlertDialog.Builder(this);
-                gy.setIcon(R.drawable.gy);
-                gy.setTitle("关于本软件：");
-                gy.setCancelable(false); //设置是否可以点击对话框外部取消
-                gy.setMessage("简介：\n这是一款基于V免签开发的免签支付接口App监控端\n修复了原版监控支付宝不回调等bug长期维护目前免费使用\n在您使用本软件前请注意：\n该软件版权归作者所有请勿破解倒卖本软件\n部分申请的权限是必要的拒绝将导致监控功能失效\n喜欢本项目就赞助一下开发者吧~\nPS：使用本软件建议开启自启动权限！\n\nApp使用协议：\n\n说明：\n该软件由十年*开发并提供技术服务支持免费使用\n1、所有用户在下载并浏览V免签监控端_Pro时均被视为已经仔细阅读本条款并完全同意。\n2、软件完全免费可自由使用并分享，您可以将它分享给您的朋友们使用。\n3、使用该软件应当遵守法律法规若侵犯了第三方知识产权或其他权益需本人承担全部责任。\n作者对此不承担任何责任。\n4、V免签监控端_Pro需要获取一定的应用权限例如内存读写，通知监听等请务必开启权限否则软件无法正常运行。\n5、如果您使用的是盗版软件，出现的一切风险作者对此不承担任何责任。\n6、用户明确并同意因其使用本App而产生的一切后果由其本人承担，作者对此不承担任何责任。\n7、我们深知个人信息对您的重要性，并会尽全力保护您的个人信息安全可靠。\n\n\"确保您已同意以上协议否则请卸载本软件！\"")
+            AlertDialog.Builder pay = new AlertDialog.Builder(this);
+            pay.setIcon(R.drawable.pay);//图标
+            pay.setTitle("选择您要打赏的方式~");//标题
+            pay.setCancelable(true); //设置是否可以点击对话框外部取消
+            //设置单选项目
+            pay.setSingleChoiceItems(fruits, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String fs = fruits[which];
+                    if (fs.equals("微信打赏")) {
+                        Toast.makeText(MainActivity.this, "收款码已保存至相册,请选择相册收款码打赏~", Toast.LENGTH_LONG).show();
+                        //获取本地图片bitmap
+                        bitmap_image = BitmapFactory.decodeResource(getResources(), R.drawable.wxpay);
+                        saveImage("微信打赏", bitmap_image);
+                        //调用saveImageToGallery方法 传入上下文 bitmap
+                        //SaveImageUtils.saveImageToGallery(MainActivity.this, bitmap_image);
+                        //打开微信扫一扫
+                        openWeixinToQE_Code(MainActivity.this);
+                    } else if (fs.equals("支付宝打赏")) {
+                        Toast.makeText(MainActivity.this, "正在打开支付宝...", Toast.LENGTH_SHORT).show();
+                        //打开支付宝付款
+                        Uri uri = Uri.parse("https://qr.alipay.com/fkx12542rpb5fljmhxlal35");
+                        Intent intent = new Intent();
+                        intent.setAction("android.intent.action.VIEW");
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+                }
+            }).create();
+            pay.show();
+            return true;
+        }else if (itemId == R.id.about){
+            //关于
+            AlertDialog.Builder gy = new AlertDialog.Builder(this);
+            gy.setIcon(R.drawable.gy);
+            gy.setTitle("关于本软件：");
+            gy.setCancelable(false); //设置是否可以点击对话框外部取消
+            gy.setMessage("简介：\n这是一款基于V免签开发的免签支付接口App监控端\n修复了原版监控支付宝不回调等bug长期维护目前免费使用\n在您使用本软件前请注意：\n该软件版权归作者所有请勿破解倒卖本软件\n部分申请的权限是必要的拒绝将导致监控功能失效\n喜欢本项目就赞助一下开发者吧~\nPS：使用本软件建议开启自启动权限！\n\nApp使用协议：\n\n说明：\n该软件由十年*开发并提供技术服务支持免费使用\n1、所有用户在下载并浏览V免签监控端_Pro时均被视为已经仔细阅读本条款并完全同意。\n2、软件完全免费可自由使用并分享，您可以将它分享给您的朋友们使用。\n3、使用该软件应当遵守法律法规若侵犯了第三方知识产权或其他权益需本人承担全部责任。\n作者对此不承担任何责任。\n4、V免签监控端_Pro需要获取一定的应用权限例如内存读写，通知监听等请务必开启权限否则软件无法正常运行。\n5、如果您使用的是盗版软件，出现的一切风险作者对此不承担任何责任。\n6、用户明确并同意因其使用本App而产生的一切后果由其本人承担，作者对此不承担任何责任。\n7、我们深知个人信息对您的重要性，并会尽全力保护您的个人信息安全可靠。\n\n\"确保您已同意以上协议否则请卸载本软件！\"")
 
                     .setNegativeButton("不同意协议", new DialogInterface.OnClickListener() {
                         @Override
@@ -585,13 +562,13 @@ public class MainActivity extends AppCompatActivity {
                              */
                         }
                     }).create(); //创建AlertDialog对象
-                gy.show(); //显示对话框
-                return true;
-                //结束程序
-            case R.id.exit:
-                //finish();
-                android.os.Process.killProcess(android.os.Process.myPid());
-                return true;
+            gy.show(); //显示对话框
+            return true;
+        }else if (itemId == R.id.exit){
+            //结束程序
+            //finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+            return true;
         }
         return super.onOptionsItemSelected(item);
 	}
@@ -655,6 +632,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //打开微信扫一扫方法二
+    @SuppressLint("WrongConstant")
     public static void toWeChatScanDirect(Context context) {
         try {
             Intent intent = new Intent();

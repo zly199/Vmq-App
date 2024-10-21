@@ -26,5 +26,5 @@
         android:id="@+id/exit"
         android:title="@string/tc"
         android:icon="@drawable/menu_exit"/>
-    
+
 </menu>

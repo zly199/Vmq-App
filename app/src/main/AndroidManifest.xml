@@ -3,17 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.shinian.pay">
 
-    <!--请求忽略电池优化-->
+    <!-- 请求忽略电池优化 -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-    <!--完全的网络访问权限-->
+    <!-- 完全的网络访问权限 -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!--控制振动-->
+    <!-- 控制振动 -->
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <!--防止手机休眠-->
+    <!-- 防止手机休眠 -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <!--修改或删除 SD 卡中的内容-->
+    <!-- 修改或删除 SD 卡中的内容 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!--读取存储卡中的内容-->
+    <!-- 读取存储卡中的内容 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -24,31 +24,32 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <!-- 主 Activity，作为应用的入口，需设置 android:exported 为 true -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"> <!-- 允许其他应用启动此 Activity -->
 
             <intent-filter>
-
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
-
             </intent-filter>
 
         </activity>
 
-        <activity android:name=".Help">
+        <!-- 帮助页面 Activity，不需要对外暴露，因此设置 android:exported 为 false -->
+        <activity
+            android:name=".Help"
+            android:exported="false"/> <!-- 不需要其他应用访问 -->
 
-        </activity>
-
+        <!-- PayNotificationListenerService 服务，需要添加 android:exported -->
         <service
             android:name="com.shinian.pay.PayNotificationListenerService"
             android:label="@string/qx"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="false"> <!-- 不对外暴露，防止其他应用访问 -->
 
             <intent-filter>
-
                 <action android:name="android.service.notification.NotificationListenerService"/>
-
             </intent-filter>
 
         </service>
