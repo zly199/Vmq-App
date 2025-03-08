@@ -55,3 +55,9 @@ android软件更新迭代较快，保持更新是唯一不会使业务受到影�
 ### 致谢
 
 [V免签](https://github.com/szvone/Vmq)
+
+
+
+===================
+直接运行: vmq-app[assembleDebug]
+然后到build->outputs->debug->app-debug.apk

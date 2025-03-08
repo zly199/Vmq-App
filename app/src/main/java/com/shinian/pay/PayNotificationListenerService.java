@@ -244,6 +244,16 @@ public class PayNotificationListenerService extends NotificationListenerService 
 
     public static String getMoney(String content) {
 
+        //如果contentlike : 微信支付收款xx.xx元(老顾客第x次消费)
+        if (content != null && content.contains("微信支付收款") && content.contains("元")) {
+            // 使用正则只匹配“微信支付收款”后面的金额
+            Pattern pattern = Pattern.compile("微信支付收款([0-9]+(?:\\.[0-9]+)?)元");
+            Matcher matcher = pattern.matcher(content);
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
+        }
+
         List<String> ss = new ArrayList<String>();
         for (String sss:content.replaceAll("[^0-9.]", ",").split(",")) {
             if (sss.length() > 0)
